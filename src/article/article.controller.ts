@@ -9,6 +9,7 @@ import {
   Put,
   UsePipes,
   ValidationPipe,
+  Query,
 } from '@nestjs/common';
 
 import { ArticleService } from '@/article/article.service';
@@ -17,13 +18,23 @@ import { User } from '@/user/decorators/user.decorator';
 import { CreateArticleDto } from './dto/article.dto';
 import { UserEntity } from '@/user/user.entity';
 import { ArticleResponseInterface } from './types/articleResponse.interface';
+import { ArticlesResponseInterface } from './types/articlesResponse.interface';
 
-@Controller('/api/v1/')
+@Controller('/api/v1/articles')
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
+  // Get all articles
+  @Get()
+  async findAll(
+    @User('id') currentUserId: number,
+    @Query() query: any,
+  ): Promise<ArticlesResponseInterface> {
+    return await this.articleService.findAll(currentUserId, query);
+  }
+
   // Create Article
-  @Post('articles')
+  @Post()
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe())
   async create(
@@ -39,7 +50,7 @@ export class ArticleController {
   }
 
   // Get Single Article by Slug
-  @Get('article/:slug')
+  @Get(':slug')
   async getSingleArticle(
     @Param('slug') slug: string,
   ): Promise<ArticleResponseInterface> {
@@ -49,7 +60,7 @@ export class ArticleController {
   }
 
   // Delete Single Article
-  @Delete('article/:slug')
+  @Delete(':slug')
   async deleteArticle(
     @User('id') currentUserId: number,
     @Param('slug') slug: string,
@@ -58,7 +69,7 @@ export class ArticleController {
   }
 
   // Update Single Article
-  @Put('article/:slug')
+  @Put(':slug')
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe())
   async updateArticle(

@@ -1,6 +1,6 @@
-import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 
-const AppDataSource: TypeOrmModuleOptions = {
+export const AppDataSource = new DataSource({
   type: 'postgres',
   host: 'localhost',
   port: 5432,
@@ -9,9 +9,4 @@ const AppDataSource: TypeOrmModuleOptions = {
   database: 'articlesapi',
   entities: [__dirname + '/**/*.entity{.ts, .js}'],
   synchronize: true,
-  logging: true,
-  subscribers: [],
-  migrations: [],
-};
-
-export default AppDataSource;
+});
