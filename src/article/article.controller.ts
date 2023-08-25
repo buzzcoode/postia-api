@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 
 import { ArticleService } from '@/article/article.service';
 import { AuthGuard } from '@/user/guards/auth.guard';
@@ -11,6 +11,7 @@ import { ArticleResponseInterface } from './types/articleResponse.interface';
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
+  // Create Article
   @Post('articles')
   @UseGuards(AuthGuard)
   async create(
@@ -21,6 +22,16 @@ export class ArticleController {
       currentUser,
       createArticleDto,
     );
+
+    return this.articleService.buildArticleResponse(article);
+  }
+
+  // Get Single Article by Slug
+  @Get('article/:slug')
+  async getSingleArticle(
+    @Param('slug') slug: string,
+  ): Promise<ArticleResponseInterface> {
+    const article = await this.articleService.findBySlug(slug);
 
     return this.articleService.buildArticleResponse(article);
   }
