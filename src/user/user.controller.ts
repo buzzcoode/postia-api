@@ -17,7 +17,7 @@ import { UserEntity } from './user.entity';
 import { AuthGuard } from './guards/auth.guard';
 import { UpdateUserDto } from './dto/updateUser.dto';
 
-@Controller()
+@Controller('/api/v1/')
 export class UserController {
   constructor(private readonly userService: UserService) {}
   @Post('users')
