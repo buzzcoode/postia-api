@@ -14,6 +14,8 @@ export class ArticleService {
     @InjectRepository(ArticleEntity)
     private readonly articleRepository: Repository<ArticleEntity>,
   ) {}
+
+  // Create a new article
   async createArticle(
     currentUser: UserEntity,
     createArticleDto: CreateArticleDto,
@@ -51,6 +53,27 @@ export class ArticleService {
   // Find Article entity by slug
   async findBySlug(slug: string): Promise<ArticleEntity> {
     return this.articleRepository.findOne({ where: { slug } });
+  }
+
+  // Update Article entity by slug
+  async updateArticle(
+    slug: string,
+    updateArticleDto: CreateArticleDto,
+    currentUserId: number,
+  ): Promise<ArticleEntity> {
+    const article = await this.findBySlug(slug);
+
+    if (!article) {
+      throw new HttpException('Article does not exist', HttpStatus.NOT_FOUND);
+    }
+
+    if (article.author.id !== currentUserId) {
+      throw new HttpException('You are not an author', HttpStatus.FORBIDDEN);
+    }
+
+    Object.assign(article, updateArticleDto);
+
+    return await this.articleRepository.save(article);
   }
 
   buildArticleResponse(article: ArticleEntity): ArticleResponseInterface {
