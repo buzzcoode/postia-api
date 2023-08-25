@@ -16,6 +16,8 @@ export class UserService {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
   ) {}
+
+  // Create User
   async createUser(createUserDto: CreateUserDto): Promise<UserEntity> {
     const userByEmail = await this.userRepository.findOne({
       where: {
@@ -43,6 +45,13 @@ export class UserService {
     return await this.userRepository.save(newUser);
   }
 
+  async findById(id: number): Promise<UserEntity> {
+    return this.userRepository.findOneBy({
+      id,
+    });
+  }
+
+  // Login
   async login(loginUserDto: LoginUserDto): Promise<UserEntity> {
     const user = await this.userRepository.findOne({
       where: {
@@ -74,6 +83,7 @@ export class UserService {
     return user;
   }
 
+  // Generate JTW
   generateJwt(user: UserEntity): string {
     return sign(
       {
